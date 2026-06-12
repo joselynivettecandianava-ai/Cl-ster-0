@@ -26,24 +26,106 @@ st.set_page_config(page_title="Tienda de Maquillaje", layout="wide")
 st.title("💄 Sistema Tienda de Maquillaje")
 st.write("Administración de Productos, Clientes y Ventas")
 
-tab_productos, tab_clientes, tab_ventas = st.tabs(
-    ["💄 Productos", "👩 Clientes", "🛒 Ventas"]
+tab_dashboard, tab_productos, tab_clientes, tab_ventas = st.tabs(
+    ["📊 Dashboard", "💄 Productos", "👩 Clientes", "🛒 Ventas"]
 )
+
+# =====================================================
+# DASHBOARD
+# =====================================================
 with tab_dashboard:
-  st.header("Interfaz Grafica")
 
-  total_productos = productos.count_documents({})
-  total_clientes = clientes.count_documents({})
-  total_ventas = ventas.count_documents({})
+    st.header("📊 Dashboard General")
 
-  col1, col2, col3 = st.columns(3)
-  
-  col1.metric("Productos", total_productos)
-  col2.metric("Clientes", total_clientes)
-  col3.metric("Ventas", total_ventas)
+    productos_data = list(productos.find())
+    clientes_data = list(clientes.find())
+    ventas_data = list(ventas.find())
 
-  st.markdown("---")
-  datos_productos = list("productos.find()")
+    total_productos = len(productos_data)
+    total_clientes = len(clientes_data)
+    total_ventas = len(ventas_data)
+
+    monto_total = 0
+
+    for venta in ventas_data:
+        monto_total += float(venta.get("total", 0))
+
+    c1, c2, c3, c4 = st.columns(4)
+
+    c1.metric("Productos", total_productos)
+    c2.metric("Clientes", total_clientes)
+    c3.metric("Ventas", total_ventas)
+    c4.metric("Ingresos", f"${monto_total:,.2f}")
+
+    st.divider()
+
+    # =====================
+    # GRAFICA DE PRODUCTOS
+    # =====================
+
+    if productos_data:
+
+        df_productos = pd.DataFrame(productos_data)
+
+        st.subheader("Stock por Producto")
+
+        graf_stock = df_productos[["nombre","stock"]]
+        graf_stock = graf_stock.set_index("nombre")
+
+        st.bar_chart(graf_stock)
+
+    # =====================
+    # GRAFICA DE CATEGORIAS
+    # =====================
+
+    if productos_data:
+
+        st.subheader("Productos por Categoría")
+
+        categorias = (
+            df_productos["categoria"]
+            .value_counts()
+        )
+
+        st.bar_chart(categorias)
+
+    # =====================
+    # GRAFICA DE VENTAS
+    # =====================
+
+    if ventas_data:
+
+        df_ventas = pd.DataFrame(ventas_data)
+
+        st.subheader("Ventas por Método de Pago")
+
+        pagos = (
+            df_ventas["metodo_pago"]
+            .value_counts()
+        )
+
+        st.bar_chart(pagos)
+        # =====================
+    # TABLA RESUMEN
+    # =====================
+
+    if ventas_data:
+
+        st.subheader("Últimas Ventas")
+
+        columnas = [
+            "cliente",
+            "producto",
+            "cantidad",
+            "precio",
+            "total",
+            "metodo_pago"
+        ]
+
+        st.dataframe(
+            df_ventas[columnas].tail(10),
+            use_container_width=True
+        )
 # =====================================================
 # PRODUCTOS
 # =====================================================
