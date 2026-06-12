@@ -12,10 +12,10 @@ def init_connection():
     return MongoClient(URI)
 try:
     cliente = init_connection()
-    db = cliente["tienda_maquillaje"]
+    db = cliente["productos"]
     productos = db["productos"]
-    clientes = db["clientes"]
-    ventas = db["ventas"]
+    clientes = db["Clientes"]
+    ventas = db["Ventas"]
 except Exception as e:
     st.error("Error al conectar con MongoDB: {e}")
 # ==========================
