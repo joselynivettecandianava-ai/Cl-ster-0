@@ -1,6 +1,3 @@
-#crear el archivo
-%%writefile app.py
-
 import streamlit as st
 from pymongo import MongoClient
 import pandas as pd
