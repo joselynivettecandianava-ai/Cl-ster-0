@@ -3,25 +3,24 @@
 
 import streamlit as st
 from pymongo import MongoClient
+import pandas as pd
 from datetime import datetime
 
 # ==========================
 # CONEXION MONGODB ATLAS
 # ==========================
-URI = "mongodb+srv://mos2025:mos2025@cluster0.ceblo5c.mongodb.net/?appName=Cluster0"
-
+URI = st.secrets["MONGO_URI"]
 @st.cache_resource
 def init_connection():
     return MongoClient(URI)
-
-cliente = init_connection()
-
-db = cliente["tienda_maquillaje"]
-
-productos = db["productos"]
-clientes = db["clientes"]
-ventas = db["ventas"]
-
+try:
+    cliente = init_connection()
+    db = cliente["tienda_maquillaje"]
+    productos = db["productos"]
+    clientes = db["clientes"]
+    ventas = db["ventas"]
+except Exception as e:
+    st.error("Error al conectar con MongoDB: {e}")
 # ==========================
 # CONFIGURACION PAGINA
 # ==========================
