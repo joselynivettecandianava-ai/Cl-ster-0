@@ -29,7 +29,21 @@ st.write("Administración de Productos, Clientes y Ventas")
 tab_productos, tab_clientes, tab_ventas = st.tabs(
     ["💄 Productos", "👩 Clientes", "🛒 Ventas"]
 )
+with tab_dashboard:
+  st.header("Interfaz Grafica")
 
+  total_productos = productos.count_documents({})
+  total_clientes = clientes.count_documents({})
+  total_ventas = ventas.count_documents({})
+
+  col1, col2, col3 = st.columns(3)
+  
+  col1.metric("Productos", total_productos)
+  col2.metric("Clientes", total_clientes)
+  col3.metric("Ventas", total_ventas)
+
+  st.markdown("---")
+  datos_productos = list("productos.find()")
 # =====================================================
 # PRODUCTOS
 # =====================================================
