@@ -1,3 +1,5 @@
+%%writefile app.py
+!streamlit run app.py & npx localtunnel ---port 8501
 import streamlit as st
 from pymongo import MongoClient
 import pandas as pd
